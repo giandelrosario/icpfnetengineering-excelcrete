@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model SSSTable {
+  id Int @id @default(autoincrement())
+  salary_range_from Float
+  salary_range_to Float
+  msc_ss Float
+  msc_mpf Float @default(0)
+  er_ss Float
+  er_mpf Float @default(0)
+  er_ec Float @default(0)
+  ee_ss Float
+  ee_mpf Float @default(0)
+}
+
+model EmployerShare {
+  id Int @id @default(autoincrement())
+  sss_share Float @default(10)
+  philhealth_share Float @default(2.5) 
+  pagibig_share Float @default(200)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Employee {
+  id           Int      @id @default(autoincrement())
+  first_name   String
+  middle_name  String?
+  last_name    String
+  civil_status String
+  citizenship  String
+  religion     String
+  birth_date   DateTime?
+  birth_place  String?
+  email        String?
+  contact_no   String?
+  status       String @default("ACTIVE")
+  hire_date    DateTime?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  relatives     EmployeeRelative[]
+  salary_history SalaryHistory[]
+  sss_settings SSSSettings?
+  philhealth_settings PhilhealthSettings?
+  pagibig_settings PagIBIGSettings?
+  bir_settings BIRSettings?
+  payroll_logs PayrollLogs[]
+}
+
+model EmployeeRelative {
+  id           Int      @id @default(autoincrement())
+  employee_id  Int
+  first_name   String?
+  middle_name  String?
+  last_name    String?
+  relationship String?
+  contact_no   String?
+  address      String?
+  occupation   String @default("UNEMLOYED")
+  birth_date   DateTime?
+  birth_place  String?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  employee     Employee   @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model SalaryHistory {
+  id Int @id @default(autoincrement())
+  employee_id Int
+  amount Float @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model SSSSettings {
+  id Int @id @default(autoincrement())
+  employee_id Int @unique
+  sss_no String?
+  ee_share Float @default(5)
+  start_date DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model PhilhealthSettings {
+  id Int @id @default(autoincrement())
+  employee_id Int @unique
+  philhealth_no String?
+  ee_share Float @default(2.5)
+  start_date DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model PagIBIGSettings {
+  id Int @id @default(autoincrement())
+  employee_id Int @unique
+  pagibig_no String?
+  ee_share Float @default(200)
+  start_date DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model BIRSettings {
+  id Int @id @default(autoincrement())
+  employee_id Int @unique
+  tin_no String?
+  start_date DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+}
+
+model PayrollLogs {
+  id Int @id @default(autoincrement())
+  employee_id Int
+  title String
+  gross_pay Float
+  net_pay Float
+  pay_period String
+  payroll_month String
+  payroll_year Int
+  process_at DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee Employee @relation(fields: [employee_id], references: [id],onDelete: Cascade, onUpdate: Cascade)
+  benefits PayrollLogsBenefits[]
+}
+
+model PayrollLogsBenefits {
+  id Int @id @default(autoincrement())
+  payroll_logs_id Int  
+  benefit_title String
+  benefit_key String
+  amount Float
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  payroll_logs PayrollLogs @relation(fields: [payroll_logs_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+
+
