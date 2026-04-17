@@ -1,5 +1,6 @@
 import { prisma } from '@/config/prisma';
-import { NextRequest } from 'next/server';
+import { verifyJwt } from '@/lib/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
 type TEmployeeRelative = {
 	employee_id?: number;
@@ -70,6 +71,14 @@ type TPayrollLogsBenefits = {
 
 export const GET = async (request: NextRequest, ctx: RouteContext<'/api/employees/[employee_id]'>) => {
 	const { employee_id } = await ctx.params;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const employee = await prisma.employee.findUnique({
@@ -175,6 +184,14 @@ export const PUT = async (request: NextRequest, ctx: RouteContext<'/api/employee
 	const { employee_id } = await ctx.params;
 	const searchParams = request.nextUrl.searchParams;
 	const type = searchParams.get('type');
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	if (type === 'personal_info') {
 		const body = await request.json();
@@ -586,6 +603,14 @@ export const PUT = async (request: NextRequest, ctx: RouteContext<'/api/employee
 
 export const DELETE = async (request: NextRequest, ctx: RouteContext<'/api/employees/[employee_id]'>) => {
 	const { employee_id } = await ctx.params;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		await prisma.employee.delete({

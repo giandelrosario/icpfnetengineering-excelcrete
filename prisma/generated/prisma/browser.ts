@@ -72,3 +72,18 @@ export type PayrollLogs = Prisma.PayrollLogsModel
  * 
  */
 export type PayrollLogsBenefits = Prisma.PayrollLogsBenefitsModel
+/**
+ * Model Disbursement
+ * 
+ */
+export type Disbursement = Prisma.DisbursementModel
+/**
+ * Model ExpenseCategory
+ * 
+ */
+export type ExpenseCategory = Prisma.ExpenseCategoryModel
+/**
+ * Model DisbursementExpense
+ * 
+ */
+export type DisbursementExpense = Prisma.DisbursementExpenseModel

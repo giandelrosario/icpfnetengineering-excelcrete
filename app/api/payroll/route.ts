@@ -1,9 +1,18 @@
 import { prisma } from '@/config/prisma';
-import { NextRequest } from 'next/server';
+import { verifyJwt } from '@/lib/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
 const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export const GET = async (request: NextRequest) => {
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
+
 	const searchParams = request.nextUrl.searchParams;
 
 	const status = searchParams.get('status') as string | undefined;
@@ -148,6 +157,14 @@ export const GET = async (request: NextRequest) => {
 
 export const POST = async (request: NextRequest) => {
 	const body = await request.json();
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	const months = body.months;
 	const year = body.year as number | undefined;

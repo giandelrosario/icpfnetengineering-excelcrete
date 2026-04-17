@@ -1,7 +1,7 @@
 'use client';
 import LoadingModal from '@/components/LoadingModal';
+import axios from 'axios';
 import { XCircle } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -16,19 +16,17 @@ const AuthPage = () => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const password = formData.get('password') as string;
-		const response = await signIn('credentials', {
-			password,
-			redirect: false,
-		});
+		const response = await axios.post('http://localhost:3000/api/auth', { password });
 
-		if (response?.ok) {
+		if (response?.status === 200) {
 			setLoading(true);
+			sessionStorage.setItem('auth_token', JSON.stringify({ token: response.data?.token }));
+			document.cookie = `auth_token=${response.data?.token}; path=/; max-age=3600; sameSite=lax`;
 			router.push('/employees');
 		} else {
 			setLoading(false);
-			if (response?.error) {
-				console.log(response.error);
-				setErrorMessage('Invalid password. Please try again.');
+			if (response?.data?.message) {
+				setErrorMessage(response.data.message);
 				setShowErrorModal(true);
 			}
 		}

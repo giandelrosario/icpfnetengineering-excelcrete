@@ -156,4 +156,42 @@ model PayrollLogsBenefits {
 }
 
 
+model Disbursement {
+  id Int @id @default(autoincrement())
+  payee_name String?
+  address String?
+  tin_no String?
+  particulars String?
+  voucher_no String?
+  receipt_no String?
+  delivery_receipt_no String?
+  sales_invoice_no String?
+  total_amount Float?
+  disbursement_date DateTime?
+  description String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  expenses DisbursementExpense[]
+}
+
+model ExpenseCategory {
+  id Int @id @default(autoincrement())
+  title String?
+  description String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  disbursement_expenses DisbursementExpense[]
+}
+
+
+model DisbursementExpense {
+  id Int @id @default(autoincrement())
+  disbursement_id Int
+  expense_category_id Int
+  amount Float?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  disbursement Disbursement @relation(fields: [disbursement_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  expense_category ExpenseCategory @relation(fields: [expense_category_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
 

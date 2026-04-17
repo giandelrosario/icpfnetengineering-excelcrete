@@ -1,6 +1,7 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { SSSRowInput } from '@/lib/sss_table_2025';
 import { prisma } from '@/config/prisma';
+import { verifyJwt } from '@/lib/jwt';
 
 const normalizeRow = (row: Record<string, unknown>, index: number): SSSRowInput => {
 	const toNumber = (value: unknown, fieldName: string) => {
@@ -27,6 +28,14 @@ const normalizeRow = (row: Record<string, unknown>, index: number): SSSRowInput 
 export const PUT = async (request: NextRequest, ctx: RouteContext<'/api/sss-table/replace-set'>) => {
 	const body = await request.json();
 	const candidateRows = Array.isArray(body) ? body : body?.rows;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	if (!Array.isArray(candidateRows) || candidateRows.length === 0) {
 		return new Response(JSON.stringify({ message: 'Invalid rows payload. Expected a non-empty array of rows.' }), {

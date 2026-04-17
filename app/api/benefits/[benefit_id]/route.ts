@@ -1,8 +1,17 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/config/prisma';
+import { verifyJwt } from '@/lib/jwt';
 
 export const PUT = async (request: NextRequest, ctx: RouteContext<'/api/benefits/[benefit_id]'>) => {
 	const { benefit_id } = await ctx.params;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const { sss_share, philhealth_share, pagibig_share } = await request.json();

@@ -1,9 +1,18 @@
 import { prisma } from '@/config/prisma';
-import { NextRequest } from 'next/server';
+import { verifyJwt } from '@/lib/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest, ctx: RouteContext<'/api/employees/[employee_id]/sss'>) => {
 	const body = await request.json();
 	const { employee_id } = await ctx.params;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const existingSettings = await prisma.sSSSettings.findUnique({

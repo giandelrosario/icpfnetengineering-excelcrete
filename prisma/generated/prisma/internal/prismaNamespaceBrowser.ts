@@ -61,7 +61,10 @@ export const ModelName = {
   PagIBIGSettings: 'PagIBIGSettings',
   BIRSettings: 'BIRSettings',
   PayrollLogs: 'PayrollLogs',
-  PayrollLogsBenefits: 'PayrollLogsBenefits'
+  PayrollLogsBenefits: 'PayrollLogsBenefits',
+  Disbursement: 'Disbursement',
+  ExpenseCategory: 'ExpenseCategory',
+  DisbursementExpense: 'DisbursementExpense'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -238,6 +241,49 @@ export const PayrollLogsBenefitsScalarFieldEnum = {
 } as const
 
 export type PayrollLogsBenefitsScalarFieldEnum = (typeof PayrollLogsBenefitsScalarFieldEnum)[keyof typeof PayrollLogsBenefitsScalarFieldEnum]
+
+
+export const DisbursementScalarFieldEnum = {
+  id: 'id',
+  payee_name: 'payee_name',
+  address: 'address',
+  tin_no: 'tin_no',
+  particulars: 'particulars',
+  voucher_no: 'voucher_no',
+  receipt_no: 'receipt_no',
+  delivery_receipt_no: 'delivery_receipt_no',
+  sales_invoice_no: 'sales_invoice_no',
+  total_amount: 'total_amount',
+  disbursement_date: 'disbursement_date',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type DisbursementScalarFieldEnum = (typeof DisbursementScalarFieldEnum)[keyof typeof DisbursementScalarFieldEnum]
+
+
+export const ExpenseCategoryScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type ExpenseCategoryScalarFieldEnum = (typeof ExpenseCategoryScalarFieldEnum)[keyof typeof ExpenseCategoryScalarFieldEnum]
+
+
+export const DisbursementExpenseScalarFieldEnum = {
+  id: 'id',
+  disbursement_id: 'disbursement_id',
+  expense_category_id: 'expense_category_id',
+  amount: 'amount',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type DisbursementExpenseScalarFieldEnum = (typeof DisbursementExpenseScalarFieldEnum)[keyof typeof DisbursementExpenseScalarFieldEnum]
 
 
 export const SortOrder = {

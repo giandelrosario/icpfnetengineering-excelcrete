@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 export const signJwtAccessToken = (payload: JwtPayload) => {
 	const secret_key = process.env.SECRET_KEY;
 	if (!secret_key) {
-		throw new Error('SECRET_KEY environment variable is not set');
+		throw new Error('ACCESS_TOKEN_KEY environment variable is not set');
 	}
 	const token = jwt.sign(payload, secret_key, { expiresIn: '1h' });
 	return token;

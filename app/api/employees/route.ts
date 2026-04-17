@@ -1,5 +1,6 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/config/prisma';
+import { verifyJwt } from '@/lib/jwt';
 
 type TEmployeeRelative = {
 	employee_id?: number;
@@ -71,6 +72,14 @@ type TPayrollLogsBenefits = {
 export const GET = async (request: NextRequest) => {
 	const searchParams = request.nextUrl.searchParams;
 	const status = searchParams.get('status') as string | undefined;
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const employees = await prisma.employee.findMany({
@@ -151,6 +160,14 @@ export const POST = async (request: NextRequest) => {
 		pagibig_settings?: TPagIBIGSettings;
 		bir_settings?: TBIRSettings;
 	};
+
+	const authHeader = await request.headers.get('Authorization');
+	const token = authHeader?.replace('Bearer ', '');
+	const isVerified = await verifyJwt(token as string);
+
+	if (!isVerified) {
+		return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+	}
 
 	try {
 		const employee = await prisma.employee.create({

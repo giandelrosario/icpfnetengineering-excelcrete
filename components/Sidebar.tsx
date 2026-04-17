@@ -1,11 +1,10 @@
 'use client';
-import { HandCoins, LayoutDashboard, LogOut, PanelRightClose, Tickets } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { BanknoteArrowDown, HandCoins, LayoutDashboard, LogOut, PanelRightClose, Tickets } from 'lucide-react';
 import React from 'react';
 import Dialog from './Dialog';
 import Link from 'next/link';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const filtered_links = [
 	{
@@ -26,6 +25,12 @@ const filtered_links = [
 		href: '/benefits',
 		icon: <HandCoins size={16} />,
 	},
+	{
+		id: 4,
+		name: 'Disbursement',
+		href: '/disbursement',
+		icon: <BanknoteArrowDown size={16} />,
+	},
 ];
 
 const Sidebar = () => {
@@ -35,11 +40,12 @@ const Sidebar = () => {
 
 	const [logOutModalOpen, setLogOutModalOpen] = React.useState(false);
 
+	const router = useRouter();
+
 	const logOut = () => {
-		signOut({
-			callbackUrl: '/auth',
-			redirect: true,
-		});
+		sessionStorage.removeItem('auth_token');
+		document.cookie = 'auth_token=; path=/; max-age=0; sameSite=lax';
+		router.replace('/auth');
 	};
 	return (
 		<>
