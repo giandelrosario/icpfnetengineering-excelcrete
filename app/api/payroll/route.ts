@@ -186,12 +186,12 @@ export const POST = async (request: NextRequest) => {
 		return new Response(JSON.stringify({ message: 'No pay period provided.' }), { status: 400 });
 	}
 
-	const pay = months?.map((month) => {
+	const pay = months?.map((month: string) => {
 		const monthIndex = parseInt(month) - 1;
 
 		const monthName = monthNames[monthIndex] || 'Unknown';
 
-		const payrollLogsData = body.employees.map((employee) => ({
+		const payrollLogsData = body.employees.map((employee: any) => ({
 			employee_id: employee.id,
 			title: `Payroll for ${monthName} ${year} - ${pay_period}`,
 			gross_pay: employee.gross,
@@ -204,7 +204,7 @@ export const POST = async (request: NextRequest) => {
 				? {
 						benefits: {
 							createMany: {
-								data: employee.applied_benefits.map((benefit) => ({
+								data: employee.applied_benefits.map((benefit: any) => ({
 									benefit_key: benefit.benefit_key,
 									amount: benefit.amount,
 									benefit_title: benefit.benefit_key,
@@ -219,7 +219,7 @@ export const POST = async (request: NextRequest) => {
 
 	try {
 		await prisma.$transaction(
-			pay.flat().map((log) =>
+			pay.flat().map((log: any) =>
 				prisma.payrollLogs.create({
 					data: log,
 				}),
