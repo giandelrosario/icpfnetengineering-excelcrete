@@ -18,7 +18,7 @@ const AuthPage = () => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const password = formData.get('password') as string;
-		const response = await axios.post(`${API_URL}/auth`, { password });
+		const response = await axios.post(`${API_URL}/api/auth`, { password });
 
 		if (response?.status === 200) {
 			setLoading(true);
