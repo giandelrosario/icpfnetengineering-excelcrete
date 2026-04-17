@@ -5,6 +5,8 @@ import { XCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
+const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000/api';
+
 const AuthPage = () => {
 	const router = useRouter();
 
@@ -16,7 +18,7 @@ const AuthPage = () => {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
 		const password = formData.get('password') as string;
-		const response = await axios.post('http://localhost:3000/api/auth', { password });
+		const response = await axios.post(`${API_URL}/auth`, { password });
 
 		if (response?.status === 200) {
 			setLoading(true);
